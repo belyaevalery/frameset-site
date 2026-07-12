@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Framework — A leading VC firm partnering with winning founders</title>
+<meta name="description" content="A leading venture firm searching for winning founders in emerging technologies. High-conviction, early-stage. (Placeholder content.)" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#000000;
+    --ink:#F3F0E9;                       /* light text on dark */
+    --ink-soft:rgba(243,240,233,.64);
+    --line:rgba(243,240,233,.16);
+    --accent:#0c78f3;                    /* electric blue accent */
+    --accent-soft:#4d9bf7;
+    --panel:rgba(255,255,255,.045);      /* translucent glass panel */
+    --panel-brd:rgba(255,255,255,.12);
+    --maxw:1240px;
+    --ease:cubic-bezier(.19,1,.22,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  /* Lenis smooth scroll */
+  html.lenis,html.lenis body{height:auto}
+  .lenis.lenis-smooth{scroll-behavior:auto!important}
+  .lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+  .lenis.lenis-stopped{overflow:hidden}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    font-size:17px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* animated beams background (ported from reactbits.dev/backgrounds/beams) */
+  #beams-bg{position:fixed;inset:0;z-index:-2;background:#000}
+  #beams-bg canvas{display:block;width:100%!important;height:100%!important}
+  .scrim{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(130% 90% at 50% -10%, transparent 42%, rgba(0,0,0,.6) 100%),
+      linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.12) 28%, rgba(0,0,0,.20) 60%, rgba(0,0,0,.5));}
+  header,main,footer{position:relative;z-index:1}
+  ::selection{background:var(--accent);color:#05060A}
+
+  /* ---------- LOADER ---------- */
+  #loader{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;
+    background:#000;transition:opacity .7s var(--ease),visibility .7s var(--ease)}
+  #loader.loader-hidden{opacity:0;visibility:hidden;pointer-events:none}
+  .loader-mark{width:140px;height:140px;overflow:visible}
+  .loader-mark .lp{
+    fill:#ffffff;fill-opacity:0;                       /* fill fades in after the line is drawn */
+    stroke:#ffffff;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .loader-mark .lp{fill-opacity:1;stroke:none}       /* no draw animation: show the solid mark */
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px}
+  .serif{font-family:"Fraunces",Georgia,serif;font-weight:340;letter-spacing:-.01em}
+  .label{
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    font-weight:500;color:var(--ink-soft);
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    transition:background .5s var(--ease),border-color .5s var(--ease),padding .4s var(--ease);
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(6,7,11,.66);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:22px 32px;transition:padding .4s var(--ease)}
+  header.scrolled .nav{padding:14px 32px}
+  .brand{display:inline-flex;align-items:center;font-family:"Fraunces",serif;font-weight:500;font-size:22px;letter-spacing:-.02em}
+  .logo-mark{width:44px;height:44px;display:block;flex:0 0 auto;color:#ffffff;transition:width .4s var(--ease),height .4s var(--ease)}
+  header.scrolled .logo-mark{width:38px;height:38px}
+  .nav-links{display:flex;gap:34px;align-items:center}
+  .nav-links a{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);position:relative;transition:color .3s}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1px;background:var(--ink);transition:width .35s var(--ease)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a:hover::after{width:100%}
+  .nav-cta{border:1px solid var(--ink);padding:9px 18px;border-radius:40px;font-size:12px!important;letter-spacing:.1em;color:var(--ink)!important;transition:background .35s var(--ease),color .35s var(--ease)}
+  .nav-cta::after{display:none}
+  .nav-cta:hover{background:var(--ink);color:#06070B!important}
+  .menu-btn{display:none;background:none;border:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--ink)}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:210px 0 120px;position:relative}
+  .hero .eyebrow{display:inline-flex;align-items:center;gap:10px;margin-bottom:34px}
+  .hero .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+  .hero h1{
+    font-family:"Fraunces",serif;font-weight:330;
+    font-size:clamp(42px,6.6vw,92px);
+    line-height:1.02;letter-spacing:-.025em;max-width:16ch;
+  }
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero-sub{margin-top:38px;max-width:52ch;font-size:19px;color:var(--ink-soft)}
+  .hero-actions{margin-top:44px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:44px;font-size:14px;letter-spacing:.04em;transition:transform .35s var(--ease),background .35s var(--ease),color .35s var(--ease)}
+  .btn-primary{background:var(--ink);color:#06070B}
+  .btn-primary:hover{background:var(--accent);transform:translateY(-2px)}
+  .btn-ghost{color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .btn .arrow{transition:transform .35s var(--ease)}
+  .btn:hover .arrow{transform:translateX(4px)}
+
+  /* rotating hairline stats under hero */
+  .hero-stats{margin-top:96px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;border-top:1px solid var(--line);padding-top:34px}
+  .stat .n{font-family:"Fraunces",serif;font-size:clamp(30px,3.4vw,46px);font-weight:340;letter-spacing:-.02em}
+  .stat .n em{font-style:italic;color:var(--accent)}
+  .stat .t{margin-top:8px;font-size:13px;color:var(--ink-soft);letter-spacing:.02em}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{position:relative}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:56px;flex-wrap:wrap}
+  .sec-head h2{font-family:"Fraunces",serif;font-weight:330;font-size:clamp(30px,4vw,54px);letter-spacing:-.02em;line-height:1.05;max-width:18ch}
+  .sec-head h2 em{font-style:italic;color:var(--accent)}
+
+  /* ---------- ABOUT ---------- */
+  .about{padding:130px 0;border-top:1px solid var(--line)}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+  .about-grid p{font-size:20px;line-height:1.6;color:var(--ink-soft)}
+  .about-grid p + p{margin-top:26px}
+  .about-grid p strong{color:var(--ink);font-weight:500}
+  .about-aside{border-left:1px solid var(--line);padding-left:40px}
+  .about-aside .label{margin-bottom:18px}
+  .about-aside .lede{font-family:"Fraunces",serif;font-size:26px;line-height:1.35;font-weight:340;letter-spacing:-.01em}
+
+  /* ---------- MARQUEE / PORTFOLIO ---------- */
+  .portfolio{padding:120px 0;border-top:1px solid var(--line);overflow:hidden}
+  .marquee{position:relative;width:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+  .marquee-track{display:flex;width:max-content;gap:18px;animation:scrollx 42s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+  .chip{
+    flex:0 0 auto;display:flex;align-items:center;gap:12px;
+    padding:16px 30px;border:1px solid var(--line);border-radius:50px;
+    font-family:"Fraunces",serif;font-size:22px;font-weight:400;letter-spacing:-.01em;
+    background:var(--panel);transition:background .35s var(--ease),color .35s var(--ease),border-color .35s var(--ease)}
+  .chip .d{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .chip:hover{background:var(--ink);color:#06070B;border-color:var(--ink)}
+  .chip:hover .d{background:#06070B}
+  .marquee.rev .marquee-track{animation-direction:reverse;animation-duration:52s}
+  .marquee + .marquee{margin-top:18px}
+  .disclaimer{margin-top:46px;font-size:12.5px;color:var(--ink-soft);max-width:78ch;line-height:1.6;opacity:.8}
+
+  /* ---------- NEWS ---------- */
+  .news{padding:130px 0;border-top:1px solid var(--line)}
+  .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .card{
+    border:1px solid var(--panel-brd);border-radius:18px;padding:30px;background:var(--panel);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    display:flex;flex-direction:column;min-height:270px;
+    transition:transform .5s var(--ease),background .5s var(--ease),border-color .5s var(--ease)}
+  .card:hover{transform:translateY(-6px);border-color:var(--accent);background:rgba(255,255,255,.07)}
+  .card .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:auto}
+  .card .pub{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+  .card .date{font-size:12px;color:var(--ink-soft)}
+  .card h3{font-family:"Fraunces",serif;font-weight:350;font-size:24px;line-height:1.25;letter-spacing:-.01em;margin-top:70px}
+  .card .go{margin-top:22px;font-size:13px;letter-spacing:.04em;color:var(--accent);display:inline-flex;gap:8px;align-items:center}
+  .card .go .arrow{transition:transform .35s var(--ease)}
+  .card:hover .go .arrow{transform:translateX(4px)}
+
+  /* ---------- TEAM ---------- */
+  .team{padding:130px 0;border-top:1px solid var(--line)}
+  .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+  .person{position:relative}
+  .person .ph{aspect-ratio:4/5;border-radius:14px;background:linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.02));position:relative;overflow:hidden;border:1px solid var(--panel-brd)}
+  .person .ph::after{content:attr(data-init);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:52px;font-weight:340;color:var(--accent);opacity:.55;transition:transform .6s var(--ease)}
+  .person:hover .ph::after{transform:scale(1.08)}
+  .person .nm{margin-top:16px;font-family:"Fraunces",serif;font-size:21px;font-weight:400;letter-spacing:-.01em}
+  .person .rl{margin-top:4px;font-size:13px;color:var(--ink-soft)}
+
+  /* ---------- CTA / CONTACT ---------- */
+  .cta{padding:150px 0;border-top:1px solid var(--line)}
+  .cta-inner{background:linear-gradient(160deg,rgba(12,120,243,.12),rgba(255,255,255,.03));border:1px solid var(--panel-brd);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--ink);border-radius:28px;padding:clamp(48px,7vw,96px);position:relative;overflow:hidden}
+  .cta-inner h2{font-family:"Fraunces",serif;font-weight:330;font-size:clamp(32px,5vw,66px);line-height:1.03;letter-spacing:-.025em;max-width:16ch}
+  .cta-inner h2 em{font-style:italic;color:var(--accent)}
+  .cta-contacts{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px;border-top:1px solid rgba(244,241,234,.16);padding-top:40px}
+  .cta-contacts .label{color:rgba(244,241,234,.55)}
+  .cta-contacts a{display:block;margin-top:12px;font-family:"Fraunces",serif;font-size:22px;color:var(--ink);transition:opacity .3s,color .3s}
+  .cta-contacts a:hover{opacity:.6}
+  .glow{position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(12,120,243,.42),transparent 70%);right:-120px;top:-160px;filter:blur(20px);pointer-events:none}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:64px 0 60px;border-top:1px solid var(--line)}
+  .foot{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap}
+  .foot .brand{font-size:26px}
+  .foot-links{display:flex;gap:44px;flex-wrap:wrap}
+  .foot-col .label{margin-bottom:16px}
+  .foot-col a{display:block;font-size:14px;color:var(--ink-soft);margin-top:9px;transition:color .3s}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-bottom{margin-top:56px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:26px}
+
+  /* ---------- REVEAL ANIMATION ---------- */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  .stagger > *{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+  .stagger.in > *{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .reveal,.stagger>*{opacity:1!important;transform:none!important;transition:none}
+    .marquee-track{animation:none}
+    .hero .eyebrow .dot{animation:none}
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:960px){
+    .about-grid{grid-template-columns:1fr;gap:44px}
+    .about-aside{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:32px}
+    .news-grid{grid-template-columns:1fr 1fr}
+    .team-grid{grid-template-columns:1fr 1fr}
+    .cta-contacts{grid-template-columns:1fr}
+    .hero-stats{grid-template-columns:1fr 1fr;gap:32px 24px}
+  }
+  @media(max-width:640px){
+    .wrap{padding:0 20px}
+    .nav{padding:18px 20px}
+    .nav-links{display:none}
+    .menu-btn{display:block}
+    .hero{padding:150px 0 80px}
+    .news-grid,.team-grid{grid-template-columns:1fr}
+    .hero-stats{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <svg class="loader-mark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Loading">
+    <path class="lp" d="M171.407 63.5487V146.041L159.685 152.988L159.685 70.4465L85.876 27.8329L97.711 21L171.407 63.5487Z"/>
+    <path class="lp" d="M148.388 159.066L137.016 165.579V83.5205L63.3197 40.9718L75.0217 34.2157L148.388 76.5738V159.066Z"/>
+    <path class="lp" d="M126.254 172.27L114.097 179.289V96.2461L40.7224 53.8831L52.5574 47.0502L126.254 89.5989V172.27Z"/>
+    <path class="lp" d="M103.243 102.624V121.728L39.8543 84.3889V103.294L76.3246 124.35V142.784L39.8543 121.728V149.703L29 143.436V59.7598L103.243 102.624Z"/>
+  </svg>
+</div>
+
+<div id="beams-bg"></div>
+<div class="scrim"></div>
+
+<header id="hdr">
+  <div class="nav">
+    <a href="#top" class="brand" aria-label="Framework — home">
+      <svg class="logo-mark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M171.407 63.5487V146.041L159.685 152.988L159.685 70.4465L85.876 27.8329L97.711 21L171.407 63.5487Z" fill="currentColor"/>
+        <path d="M148.388 159.066L137.016 165.579V83.5205L63.3197 40.9718L75.0217 34.2157L148.388 76.5738V159.066Z" fill="currentColor"/>
+        <path d="M126.254 172.27L114.097 179.289V96.2461L40.7224 53.8831L52.5574 47.0502L126.254 89.5989V172.27Z" fill="currentColor"/>
+        <path d="M103.243 102.624V121.728L39.8543 84.3889V103.294L76.3246 124.35V142.784L39.8543 121.728V149.703L29 143.436V59.7598L103.243 102.624Z" fill="currentColor"/>
+      </svg>
+    </a>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#news">Press</a>
+      <a href="#team">Team</a>
+      <a href="#contact" class="nav-cta">Contact</a>
+    </nav>
+    <button class="menu-btn">Menu</button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <h1 class="reveal">A leading VC firm partnering with <em>winning founders.</em></h1>
+      <p class="hero-sub reveal">We're a San Francisco–based venture firm searching for winning founders in emerging technologies. High-conviction investors who lead early-stage rounds, with check sizes that typically range from $5M to $40M.</p>
+      <div class="hero-actions reveal">
+        <a href="#about" class="btn btn-primary">Learn more <span class="arrow">→</span></a>
+        <a href="#portfolio" class="btn btn-ghost">View portfolio</a>
+      </div>
+      <div class="hero-stats stagger">
+        <div class="stat"><div class="n"><em>2019</em></div><div class="t">Founded in San Francisco</div></div>
+        <div class="stat"><div class="n">$400M</div><div class="t">Raised across funds</div></div>
+        <div class="stat"><div class="n">$5–40M</div><div class="t">Typical check size</div></div>
+        <div class="stat"><div class="n">4×</div><div class="t">Market cycles of conviction</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>Built by founders, <em>for founders.</em></h2>
+      </div>
+      <div class="about-grid">
+        <div class="reveal">
+          <p>Founded in 2019 by <strong>Vance Spencer</strong> and <strong>Michael Anderson</strong> — formerly of Netflix and Snapchat — Framework saw initial success as one of the first venture firms in the digital asset space.</p>
+          <p>The firm has since raised additional funds and expanded its focus toward emerging technologies including AI, infrastructure, and next-generation networks. Based in San Francisco, we take a high-conviction approach and usually lead early-stage rounds.</p>
+        </div>
+        <div class="about-aside reveal">
+          <div class="label">Our approach</div>
+          <p class="lede">Over four market cycles, we've become experts at discerning which founders have the grit, drive, and product-market fit to launch and scale a category-defining company.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio" id="portfolio">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>Partnering with the <em>teams building next.</em></h2>
+      </div>
+    </div>
+    <div class="marquee" id="mq1">
+      <div class="marquee-track"></div>
+    </div>
+    <div class="marquee rev" id="mq2">
+      <div class="marquee-track"></div>
+    </div>
+    <div class="wrap">
+      <p class="disclaimer reveal">The portfolio companies referenced are placeholders for demonstration and are not representative of all investments. A more complete list would appear here. Past results are not necessarily indicative of future results.</p>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section class="news" id="news">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>In the <em>news.</em></h2>
+      </div>
+      <div class="news-grid stagger">
+        <a class="card" href="#">
+          <div class="meta"><span class="pub">Forbes</span><span class="date">11.18.2025</span></div>
+          <h3>Obex set to be the Y-Combinator for stablecoin startups with a $2.5B mandate.</h3>
+          <span class="go">Read <span class="arrow">→</span></span>
+        </a>
+        <a class="card" href="#">
+          <div class="meta"><span class="pub">Fortune</span><span class="date">04.10.2025</span></div>
+          <h3>Life-insurance startup Meanwhile raises $40M in a round led by Framework.</h3>
+          <span class="go">Read <span class="arrow">→</span></span>
+        </a>
+        <a class="card" href="#">
+          <div class="meta"><span class="pub">Bloomberg</span><span class="date">04.21.2022</span></div>
+          <h3>Framework Ventures launches its $400 million fund.</h3>
+          <span class="go">Read <span class="arrow">→</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="team" id="team">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>The <em>team.</em></h2>
+      </div>
+      <div class="team-grid stagger">
+        <div class="person"><div class="ph" data-init="VS"></div><div class="nm">Vance Spencer</div><div class="rl">Co-founder</div></div>
+        <div class="person"><div class="ph" data-init="MA"></div><div class="nm">Michael Anderson</div><div class="rl">Co-founder</div></div>
+        <div class="person"><div class="ph" data-init="RP"></div><div class="nm">Rajiv Patel-O'Connor</div><div class="rl">General Partner</div></div>
+        <div class="person"><div class="ph" data-init="PE"></div><div class="nm">Parker Edwards</div><div class="rl">Partner</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / CONTACT -->
+  <section class="cta" id="contact">
+    <div class="wrap">
+      <div class="cta-inner reveal">
+        <div class="glow"></div>
+        <h2>Building something <em>ambitious?</em> Let's talk.</h2>
+        <div class="cta-contacts">
+          <div><div class="label">For founders</div><a href="mailto:hello@framework.ventures">hello@framework.ventures</a></div>
+          <div><div class="label">Investor inquiries</div><a href="mailto:investorrelations@framework.ventures">investorrelations@framework.ventures</a></div>
+          <div><div class="label">Press</div><a href="mailto:press@framework.ventures">press@framework.ventures</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a href="#top" class="brand" aria-label="Framework — home">
+          <svg class="logo-mark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M171.407 63.5487V146.041L159.685 152.988L159.685 70.4465L85.876 27.8329L97.711 21L171.407 63.5487Z" fill="currentColor"/>
+            <path d="M148.388 159.066L137.016 165.579V83.5205L63.3197 40.9718L75.0217 34.2157L148.388 76.5738V159.066Z" fill="currentColor"/>
+            <path d="M126.254 172.27L114.097 179.289V96.2461L40.7224 53.8831L52.5574 47.0502L126.254 89.5989V172.27Z" fill="currentColor"/>
+            <path d="M103.243 102.624V121.728L39.8543 84.3889V103.294L76.3246 124.35V142.784L39.8543 121.728V149.703L29 143.436V59.7598L103.243 102.624Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <p style="margin-top:14px;max-width:34ch;color:var(--ink-soft);font-size:14px">A leading venture firm partnering with winning founders in emerging technologies.</p>
+      </div>
+      <div class="foot-links">
+        <div class="foot-col">
+          <div class="label">Firm</div>
+          <a href="#about">About</a>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#team">Team</a>
+        </div>
+        <div class="foot-col">
+          <div class="label">More</div>
+          <a href="#news">Press</a>
+          <a href="#contact">Contact</a>
+          <a href="#">Jobs</a>
+        </div>
+        <div class="foot-col">
+          <div class="label">Social</div>
+          <a href="#">X (Twitter)</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Frameset Capital — placeholder site. Content adapted for demonstration.</span>
+      <span>Terms · Privacy · Disclosures</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- loader: show a 3s logo animation, then reveal the site ----
+  (function(){
+    const loader = document.getElementById('loader');
+    if(!loader) return;
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hold = reduce ? 900 : 3000;
+    const hide = () => {
+      loader.classList.add('loader-hidden');
+      setTimeout(()=>loader.remove(), 750);
+    };
+
+    // ---- draw-on animation: each part's outline is traced, then its fill fades in ----
+    if(!reduce && 'animate' in SVGElement.prototype){
+      const parts = loader.querySelectorAll('.lp');
+      const DRAW = 1650, STEP = 150, FILL = 520;   // ms
+      parts.forEach((p, i) => {
+        const len = p.getTotalLength();
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+        const delay = i * STEP;
+        p.animate(
+          [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+          { duration: DRAW, delay, easing: 'cubic-bezier(.62,0,.2,1)', fill: 'forwards' }
+        );
+        p.animate(
+          [{ fillOpacity: 0 }, { fillOpacity: 1 }],
+          { duration: FILL, delay: delay + DRAW, easing: 'ease-out', fill: 'forwards' }
+        );
+      });
+    }
+
+    setTimeout(hide, hold);
+  })();
+
+  // ---- sticky nav state ----
+  const hdr = document.getElementById('hdr');
+  const onScroll = () => hdr.classList.toggle('scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  // ---- scroll reveals (IntersectionObserver) ----
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:.15, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal, .stagger').forEach(el=>io.observe(el));
+
+  // ---- staggered children delays ----
+  document.querySelectorAll('.stagger').forEach(group=>{
+    [...group.children].forEach((c,i)=>{ c.style.transitionDelay = (i*90)+'ms'; });
+  });
+
+  // ---- portfolio marquee (duplicated for seamless loop) ----
+  const companies = ["Aave","Better","Cantina","Chainlink","Daylight","Dflow","Hyperliquid","Jito Labs","Maple","Meanwhile","Obex","Odyn","Plasma","Sky","Uranium Digital","USD.ai"];
+  function fill(id, list){
+    const track = document.querySelector('#'+id+' .marquee-track');
+    const build = arr => arr.map(n=>`<div class="chip"><span class="d"></span>${n}</div>`).join('');
+    // duplicate so translateX(-50%) loops seamlessly
+    track.innerHTML = build(list) + build(list);
+  }
+  const half = Math.ceil(companies.length/2);
+  fill('mq1', companies.slice(0,half));
+  fill('mq2', companies.slice(half));
+</script>
+
+<!-- ============ BEAMS BACKGROUND (ported from reactbits.dev/backgrounds/beams) ============ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const container = document.getElementById('beams-bg');
+  if(!window.THREE || !container){ return; }
+  const T = window.THREE;
+  const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- same parameters as the reactbits example ----
+  const P = { beamWidth:3, beamHeight:40, beamNumber:20, lightColor:'#0c78f3',
+              speed:2.9, noiseIntensity:1.25, scale:0.2, rotation:19 };
+  const PARALLAX = 12;     // world units the camera travels across the full page (higher = faster bg)
+  const DAMP = 0.11;       // easing toward the (already-smoothed) scroll position
+
+  const hexToRGB = hex => { const c=hex.replace('#',''); return [parseInt(c.substr(0,2),16)/255, parseInt(c.substr(2,2),16)/255, parseInt(c.substr(4,2),16)/255]; };
+  const degToRad = d => d*Math.PI/180;
+
+  const noise = `
+  float random (in vec2 st){ return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123); }
+  float noise (in vec2 st){
+    vec2 i=floor(st); vec2 f=fract(st);
+    float a=random(i); float b=random(i+vec2(1.0,0.0));
+    float c=random(i+vec2(0.0,1.0)); float d=random(i+vec2(1.0,1.0));
+    vec2 u=f*f*(3.0-2.0*f);
+    return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
+  }
+  vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x,289.0);}
+  vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+  vec3 fade(vec3 t){return t*t*t*(t*(t*6.0-15.0)+10.0);}
+  float cnoise(vec3 P){
+    vec3 Pi0=floor(P); vec3 Pi1=Pi0+vec3(1.0);
+    Pi0=mod(Pi0,289.0); Pi1=mod(Pi1,289.0);
+    vec3 Pf0=fract(P); vec3 Pf1=Pf0-vec3(1.0);
+    vec4 ix=vec4(Pi0.x,Pi1.x,Pi0.x,Pi1.x);
+    vec4 iy=vec4(Pi0.yy,Pi1.yy);
+    vec4 iz0=Pi0.zzzz; vec4 iz1=Pi1.zzzz;
+    vec4 ixy=permute(permute(ix)+iy);
+    vec4 ixy0=permute(ixy+iz0); vec4 ixy1=permute(ixy+iz1);
+    vec4 gx0=ixy0/7.0; vec4 gy0=fract(floor(gx0)/7.0)-0.5; gx0=fract(gx0);
+    vec4 gz0=vec4(0.5)-abs(gx0)-abs(gy0); vec4 sz0=step(gz0,vec4(0.0));
+    gx0-=sz0*(step(0.0,gx0)-0.5); gy0-=sz0*(step(0.0,gy0)-0.5);
+    vec4 gx1=ixy1/7.0; vec4 gy1=fract(floor(gx1)/7.0)-0.5; gx1=fract(gx1);
+    vec4 gz1=vec4(0.5)-abs(gx1)-abs(gy1); vec4 sz1=step(gz1,vec4(0.0));
+    gx1-=sz1*(step(0.0,gx1)-0.5); gy1-=sz1*(step(0.0,gy1)-0.5);
+    vec3 g000=vec3(gx0.x,gy0.x,gz0.x); vec3 g100=vec3(gx0.y,gy0.y,gz0.y);
+    vec3 g010=vec3(gx0.z,gy0.z,gz0.z); vec3 g110=vec3(gx0.w,gy0.w,gz0.w);
+    vec3 g001=vec3(gx1.x,gy1.x,gz1.x); vec3 g101=vec3(gx1.y,gy1.y,gz1.y);
+    vec3 g011=vec3(gx1.z,gy1.z,gz1.z); vec3 g111=vec3(gx1.w,gy1.w,gz1.w);
+    vec4 norm0=taylorInvSqrt(vec4(dot(g000,g000),dot(g010,g010),dot(g100,g100),dot(g110,g110)));
+    g000*=norm0.x; g010*=norm0.y; g100*=norm0.z; g110*=norm0.w;
+    vec4 norm1=taylorInvSqrt(vec4(dot(g001,g001),dot(g011,g011),dot(g101,g101),dot(g111,g111)));
+    g001*=norm1.x; g011*=norm1.y; g101*=norm1.z; g111*=norm1.w;
+    float n000=dot(g000,Pf0); float n100=dot(g100,vec3(Pf1.x,Pf0.yz));
+    float n010=dot(g010,vec3(Pf0.x,Pf1.y,Pf0.z)); float n110=dot(g110,vec3(Pf1.xy,Pf0.z));
+    float n001=dot(g001,vec3(Pf0.xy,Pf1.z)); float n101=dot(g101,vec3(Pf1.x,Pf0.y,Pf1.z));
+    float n011=dot(g011,vec3(Pf0.x,Pf1.yz)); float n111=dot(g111,Pf1);
+    vec3 fade_xyz=fade(Pf0);
+    vec4 n_z=mix(vec4(n000,n100,n010,n110),vec4(n001,n101,n011,n111),fade_xyz.z);
+    vec2 n_yz=mix(n_z.xy,n_z.zw,fade_xyz.y);
+    float n_xyz=mix(n_yz.x,n_yz.y,fade_xyz.x);
+    return 2.2*n_xyz;
+  }`;
+
+  function extendMaterial(BaseMaterial, cfg){
+    const physical = T.ShaderLib.physical;
+    const baseVert = physical.vertexShader, baseFrag = physical.fragmentShader, baseUniforms = physical.uniforms;
+    const baseDefines = physical.defines || {};
+    const uniforms = T.UniformsUtils.clone(baseUniforms);
+    const defaults = new BaseMaterial(cfg.material || {});
+    if(defaults.color) uniforms.diffuse.value = defaults.color;
+    if('roughness' in defaults) uniforms.roughness.value = defaults.roughness;
+    if('metalness' in defaults) uniforms.metalness.value = defaults.metalness;
+    if('envMapIntensity' in defaults) uniforms.envMapIntensity.value = defaults.envMapIntensity;
+    Object.entries(cfg.uniforms || {}).forEach(([k,u])=>{
+      uniforms[k] = (u!==null && typeof u==='object' && 'value' in u) ? u : { value:u };
+    });
+    let vert = cfg.header+'\n'+(cfg.vertexHeader||'')+'\n'+baseVert;
+    let frag = cfg.header+'\n'+(cfg.fragmentHeader||'')+'\n'+baseFrag;
+    for(const inc in (cfg.vertex||{})) vert = vert.replace(inc, inc+'\n'+cfg.vertex[inc]);
+    for(const inc in (cfg.fragment||{})) frag = frag.replace(inc, inc+'\n'+cfg.fragment[inc]);
+    return new T.ShaderMaterial({
+      defines: Object.assign({}, baseDefines),
+      uniforms, vertexShader:vert, fragmentShader:frag,
+      lights:true, fog:!!(cfg.material && cfg.material.fog)
+    });
+  }
+
+  function createStackedPlanes(n, width, height, spacing, heightSegments){
+    const geometry = new T.BufferGeometry();
+    const numVertices = n*(heightSegments+1)*2;
+    const numFaces = n*heightSegments*2;
+    const positions = new Float32Array(numVertices*3);
+    const indices = new Uint32Array(numFaces*3);
+    const uvs = new Float32Array(numVertices*2);
+    let vo=0, io=0, uo=0;
+    const totalWidth = n*width + (n-1)*spacing;
+    const xBase = -totalWidth/2;
+    for(let i=0;i<n;i++){
+      const xOffset = xBase + i*(width+spacing);
+      const uvX = Math.random()*300, uvY = Math.random()*300;
+      for(let j=0;j<=heightSegments;j++){
+        const y = height*(j/heightSegments-0.5);
+        positions.set([xOffset,y,0, xOffset+width,y,0], vo*3);
+        const v = j/heightSegments;
+        uvs.set([uvX, v+uvY, uvX+1, v+uvY], uo);
+        if(j<heightSegments){
+          const a=vo,b=vo+1,c=vo+2,d=vo+3;
+          indices.set([a,b,c,c,b,d], io); io+=6;
+        }
+        vo+=2; uo+=4;
+      }
+    }
+    geometry.setAttribute('position', new T.BufferAttribute(positions,3));
+    geometry.setAttribute('uv', new T.BufferAttribute(uvs,2));
+    geometry.setIndex(new T.BufferAttribute(indices,1));
+    geometry.computeVertexNormals();
+    return geometry;
+  }
+
+  const w = container.clientWidth || innerWidth;
+  const h = container.clientHeight || innerHeight;
+
+  const scene = new T.Scene();
+  scene.background = new T.Color('#000000');
+
+  const camera = new T.PerspectiveCamera(30, w/h, 0.1, 200);
+  camera.position.set(0,0,20);
+
+  const renderer = new T.WebGLRenderer({ antialias:true, alpha:false, powerPreference:'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  renderer.setSize(w,h);
+  renderer.domElement.style.pointerEvents = 'none';
+  container.appendChild(renderer.domElement);
+
+  const material = extendMaterial(T.MeshStandardMaterial, {
+    header: `
+      varying vec3 vEye; varying float vNoise; varying vec2 vUv; varying vec3 vPosition;
+      uniform float time; uniform float uSpeed; uniform float uNoiseIntensity; uniform float uScale;
+      ${noise}`,
+    vertexHeader: `
+      float getPos(vec3 pos){
+        vec3 noisePos = vec3(pos.x*0., pos.y-uv.y, pos.z+time*uSpeed*3.)*uScale;
+        return cnoise(noisePos);
+      }
+      vec3 getCurrentPos(vec3 pos){ vec3 np=pos; np.z+=getPos(pos); return np; }
+      vec3 getNormal(vec3 pos){
+        vec3 cur=getCurrentPos(pos);
+        vec3 nX=getCurrentPos(pos+vec3(0.01,0.0,0.0));
+        vec3 nZ=getCurrentPos(pos+vec3(0.0,-0.01,0.0));
+        vec3 tX=normalize(nX-cur); vec3 tZ=normalize(nZ-cur);
+        return normalize(cross(tZ,tX));
+      }`,
+    vertex: {
+      '#include <begin_vertex>': 'transformed.z += getPos(transformed.xyz);',
+      '#include <beginnormal_vertex>': 'objectNormal = getNormal(position.xyz);'
+    },
+    fragment: {
+      '#include <dithering_fragment>': 'float rn = noise(gl_FragCoord.xy); gl_FragColor.rgb -= rn / 15.0 * uNoiseIntensity;'
+    },
+    material: { fog:true },
+    uniforms: {
+      diffuse: new T.Color(hexToRGB('#000000')[0],hexToRGB('#000000')[1],hexToRGB('#000000')[2]),
+      time: { value:0 },
+      roughness: 0.3,
+      metalness: 0.3,
+      uSpeed: { value:P.speed },
+      envMapIntensity: 10,
+      uNoiseIntensity: P.noiseIntensity,
+      uScale: P.scale
+    }
+  });
+
+  const geometry = createStackedPlanes(P.beamNumber, P.beamWidth, P.beamHeight, 0, 100);
+  const mesh = new T.Mesh(geometry, material);
+  const group = new T.Group();
+  group.rotation.z = degToRad(P.rotation);
+  group.add(mesh);
+  scene.add(group);
+
+  const dirLight = new T.DirectionalLight(new T.Color(P.lightColor), 1);
+  dirLight.position.set(0,3,10);
+  scene.add(dirLight);
+  scene.add(new T.AmbientLight(0xffffff, 1));
+
+  // ---- scroll-driven parallax (background glides with the page) ----
+  let scrollTarget = 0, scrollCur = 0;
+  function updateScrollTarget(){
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const frac = Math.min(1, Math.max(0, (window.scrollY||window.pageYOffset||0) / max));
+    scrollTarget = frac * PARALLAX;
+    if(reduceMotion){ scrollCur = scrollTarget; camera.position.y = -scrollCur; renderer.render(scene, camera); }
+  }
+  updateScrollTarget();
+  addEventListener('scroll', updateScrollTarget, { passive:true });
+
+  const clock = new T.Clock();
+  function frame(){
+    material.uniforms.time.value += 0.1 * clock.getDelta();
+    scrollCur += (scrollTarget - scrollCur) * DAMP;   // smooth easing toward scroll position
+    camera.position.y = -scrollCur;                   // beams drift as you scroll
+    renderer.render(scene, camera);
+    if(!reduceMotion) requestAnimationFrame(frame);
+  }
+  frame();
+
+  addEventListener('resize', ()=>{
+    const nw = container.clientWidth || innerWidth, nh = container.clientHeight || innerHeight;
+    camera.aspect = nw/nh; camera.updateProjectionMatrix(); renderer.setSize(nw,nh);
+    updateScrollTarget();
+  }, { passive:true });
+})();
+</script>
+
+<!-- ============ SMOOTH SCROLL (Lenis) ============ -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<script>
+(function(){
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(typeof Lenis === 'undefined' || reduce) return;   // fall back to native scroll
+
+  const lenis = new Lenis({
+    duration: 1.15,                                     // higher = more glide
+    easing: t => 1 - Math.pow(1 - t, 3),                // ease-out cubic
+    smoothWheel: true,
+    wheelMultiplier: 1,
+    touchMultiplier: 1.4
+  });
+
+  function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+
+  // smooth in-page anchor navigation
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href');
+      if(id === '#'){ e.preventDefault(); return; }
+      const el = id.length > 1 ? document.querySelector(id) : null;
+      if(el){ e.preventDefault(); lenis.scrollTo(el, { offset: -8 }); }
+    });
+  });
+
+  window.__lenis = lenis;
+})();
+</script>
+</body>
+</html>
